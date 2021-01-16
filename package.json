@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://gitlab.com/zephyr-payments/content-integration/issues"
   },
-  "homepage": "https://gitlab.com/zephyr-payments/content-integration#readme"
+  "homepage": "https://gitlab.com/zephyr-payments/content-integration#readme",
+  "dependencies": {
+    "crypto-js": "^4.0.0",
+    "random-token": "0.0.8"
+  }
 }
