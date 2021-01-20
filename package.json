@@ -1,0 +1,25 @@
+{
+  "name": "zephyr-ci",
+  "version": "1.0.0",
+  "description": "",
+  "main": "zephyr-ci.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/zephyr-payments/content-integration.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/zephyr-payments/content-integration/issues"
+  },
+  "homepage": "https://gitlab.com/zephyr-payments/content-integration#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "crypto-ts": "^1.0.2",
+    "rand-token": "^1.0.1",
+    "random-token": "0.0.8"
+  }
+}
