@@ -3,6 +3,7 @@ export interface Content {
     name: string
     description: string
     price: number
+    cipher: any
 }
 
 export interface ContentOptions {

@@ -49,6 +49,7 @@ export = class Zephyr {
 
         //TODO: add additional branching for different types of content
         res.data.cipher = this.encryptText(data)
+
         return res.data
     }
 
