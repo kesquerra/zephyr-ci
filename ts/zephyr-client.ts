@@ -10,11 +10,11 @@ interface Content {
 
 const showContent = (content: Content): void => {
     let output: string = `
-    <div class="zephyr-ci">${content.id}</div>
-    <div class="name">${content.name}</div>
-    <div class="description">${content.description}</div>
-    <div class="price">${content.price}</div>
-    <div class="cipher">${content.cipher}</div>`
+    <div class="zephyr-id">${content.id}</div>
+    <div class="zephyr-name">${content.name}</div>
+    <div class="zephyr-description">${content.description}</div>
+    <div class="zephyr-price">${content.price}</div>
+    <div class="zephyr-cipher">${content.cipher}</div>`
     container.innerHTML += output
 }
 

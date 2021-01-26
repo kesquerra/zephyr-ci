@@ -2,9 +2,13 @@
   "name": "zephyr-ci",
   "version": "1.0.0",
   "description": "",
-  "main": "zephyr-ci.js",
+  "main": "index.js",
+  "type": "commonjs",
+  "types": "./index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "shx rm -rf dist/*",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -20,6 +24,11 @@
     "axios": "^0.21.1",
     "crypto-ts": "^1.0.2",
     "rand-token": "^1.0.1",
-    "random-token": "0.0.8"
+    "random-token": "0.0.8",
+    "tsc": "^1.20150623.0",
+    "typescript": "^4.1.3"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.22"
   }
 }
