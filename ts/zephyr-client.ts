@@ -1,6 +1,6 @@
 const container: HTMLElement | any = document.getElementById("test")
 
-interface Content {
+export interface Content {
     id: string
     name: string
     description: string
@@ -8,7 +8,7 @@ interface Content {
     cipher: any
 }
 
-const showContent = (content: Content): void => {
+export const showContent = (content: Content): void => {
     let output: string = `
     <div class="zephyr-id">${content.id}</div>
     <div class="zephyr-name">${content.name}</div>
@@ -18,7 +18,7 @@ const showContent = (content: Content): void => {
     container.innerHTML += output
 }
 
-const getContent = async(id: string, url: string): Promise<void> => {
+export const getContent = async(id: string, url: string): Promise<void> => {
     const data: Response = await fetch(url)
     const content: any = await data.json()
     const contentDetails = {
