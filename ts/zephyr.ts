@@ -42,15 +42,13 @@ export class Zephyr {
 
     //TODO: encryption for different types of content
 
-    async createContent (data:Partial<ContentOptions>) : Promise<Content> {
-        const key = uid(16);
-        data.key = key;
-        const res = await this.request(`${this.ZephyrUrl}/content/create`, 'POST', {data})
-
-        //TODO: add additional branching for different types of content
-        res.data.cipher = this.encryptText(data)
-
-        return res.data
+    postKeys = async(content: Content): Promise<void> => {
+        var data = {
+            "resource_id": content.id,
+            "cost": content.price,
+            "dkey": content.key
+        }
+        const res = await this.request(`${this.ZephyrUrl}/resource`, 'POST', {data})
     }
 
 }

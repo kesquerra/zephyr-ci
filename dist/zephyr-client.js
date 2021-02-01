@@ -24,11 +24,14 @@ class ContentCreator {
         </div>`;
             return output;
         };
+        this.generateID = () => {
+            var id = rand_token_1.uid(16);
+            this.content.id = id;
+        };
         this.encryptText = (text) => {
-            var key = rand_token_1.uid(16);
+            var key = rand_token_1.uid(32);
             var cipher = crypto_ts_1.AES.encrypt(text, key);
             this.content.cipher = cipher;
-            //send KEY to API
             console.log(key); //for testing purposes only
         };
         this.getContent = (id, url) => __awaiter(this, void 0, void 0, function* () {
@@ -44,6 +47,7 @@ class ContentCreator {
             this.showContent();
         });
         this.content = content;
+        this.generateID();
         this.encryptText(content.cipher);
         this.output = this.showContent();
     }

@@ -9,6 +9,7 @@ export class ContentCreator {
 
     constructor (content: Content) {
         this.content = content;
+        this.generateID();
         this.encryptText(content.cipher)
         this.output = this.showContent()
         
@@ -25,15 +26,20 @@ export class ContentCreator {
         return output;
     }
 
+    generateID = (): void => {
+        var id = uid(16);
+        this.content.id = id;
+    }
+
     encryptText = (text: string): void => {
-        var key = uid(16);
+        var key = uid(32);
         var cipher = AES.encrypt(text, key)
         this.content.cipher = cipher;
 
-        //send KEY to API
-
         console.log(key); //for testing purposes only
     }
+
+
 
     getContent = async(id: string, url: string): Promise<void> => {
         const data: Response = await fetch(url)

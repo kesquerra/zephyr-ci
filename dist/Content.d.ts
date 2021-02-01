@@ -4,6 +4,7 @@ export interface Content {
     description: string;
     price: number;
     cipher: any;
+    key: string;
 }
 export interface ContentOptions {
     name: string;
