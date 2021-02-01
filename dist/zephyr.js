@@ -8,10 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Zephyr = void 0;
 const axios_1 = require("axios");
 const rand_token_1 = require("rand-token");
 const crypto_ts_1 = require("crypto-ts");
-module.exports = class Zephyr {
+class Zephyr {
     constructor(options) {
         this.clientID = options.clientID;
         this.clientKey = options.clientKey;
@@ -50,5 +52,6 @@ module.exports = class Zephyr {
             return res.data;
         });
     }
-};
+}
+exports.Zephyr = Zephyr;
 //# sourceMappingURL=zephyr.js.map

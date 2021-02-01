@@ -1,19 +1,22 @@
 {
   "name": "zephyr-ci",
-  "version": "1.0.2",
+  "version": "1.0.11",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "type": "commonjs",
-  "types": "./index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "shx rm -rf dist/*",
-    "build": "tsc"
+    "clean": "rmdir dist /s /q",
+    "build": "tsc --build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.com/zephyr-payments/content-integration.git"
   },
+  "files": [
+    "dist"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {

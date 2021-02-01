@@ -1,9 +1,9 @@
 import axios, {AxiosRequestConfig, Method} from 'axios'
-import {Content, ContentOptions} from './types/Content';
+import {Content, ContentOptions} from './Content';
 import {uid} from 'rand-token';
 import {AES} from 'crypto-ts';
 
-export = class Zephyr {
+export class Zephyr {
     public clientID: string;
     public clientKey: string;
     public ZephyrUrl: string;
