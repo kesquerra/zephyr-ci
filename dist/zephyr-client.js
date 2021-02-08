@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContentCreator = void 0;
 const rand_token_1 = require("rand-token");
 const crypto_ts_1 = require("crypto-ts");
+const fs_1 = require("fs");
 class ContentCreator {
     constructor(content) {
         this.showContent = () => {
@@ -20,7 +21,8 @@ class ContentCreator {
             <div class="zephyr-name">Name: ${this.content.name}</div>
             <div class="zephyr-description">Description: ${this.content.description}</div>
             <div class="zephyr-price">Price: ${this.content.price}</div>
-            <div class="zephyr-cipher">Content: ${this.content.cipher}</div>
+            <div class="zephyr-cipher" cipher-content="${this.content.content}"></div>
+            <img src="data:image/jpeg;base64,${this.content.content}" alt="" />
         </div>`;
             return output;
         };
@@ -31,8 +33,13 @@ class ContentCreator {
         this.encryptText = (text) => {
             var key = rand_token_1.uid(32);
             var cipher = crypto_ts_1.AES.encrypt(text, key);
-            this.content.cipher = cipher;
+            this.content.content = cipher;
             console.log(key); //for testing purposes only
+        };
+        this.encryptImage = (filePath) => {
+            var file = fs_1.readFileSync(filePath, 'base64');
+            this.content.content = file;
+            //this.encryptText(file)
         };
         this.getContent = (id, url) => __awaiter(this, void 0, void 0, function* () {
             const data = yield fetch(url);
@@ -42,13 +49,13 @@ class ContentCreator {
                 name: content.name,
                 description: content.description,
                 price: content.price,
-                cipher: content.cipher
+                cipher: content.content
             };
             this.showContent();
         });
         this.content = content;
         this.generateID();
-        this.encryptText(content.cipher);
+        this.encryptImage(content.content);
         this.output = this.showContent();
     }
 }

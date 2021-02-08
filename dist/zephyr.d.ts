@@ -1,4 +1,4 @@
-import { Content } from './Content';
+import { ClientData, Content, ContentOptions } from './DataTypes';
 export declare class Zephyr {
     clientID: string;
     clientKey: string;
@@ -8,11 +8,11 @@ export declare class Zephyr {
     constructor(options: ClientData);
     private request;
     private getToken;
+    private postKeys;
+    private generateHTML;
+    private generateID;
     private encryptText;
-    postKeys: (content: Content) => Promise<void>;
+    private encryptImage;
+    private encrypt;
+    createContent: (options: ContentOptions) => Content;
 }
-interface ClientData {
-    clientID: string;
-    clientKey: string;
-}
-export {};

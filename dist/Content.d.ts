@@ -3,15 +3,11 @@ export interface Content {
     name: string;
     description: string;
     price: number;
-    cipher: any;
     key: string;
+    content: any;
 }
-export interface ContentOptions {
-    name: string;
-    description: string;
-    url: string;
+export interface ContentAPI {
+    id: string;
     price: number;
     key: string;
-    type: string;
-    content: any;
 }

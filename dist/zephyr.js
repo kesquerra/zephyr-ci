@@ -11,10 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Zephyr = void 0;
 const axios_1 = require("axios");
+const fs_1 = require("fs");
+const rand_token_1 = require("rand-token");
 const crypto_ts_1 = require("crypto-ts");
 class Zephyr {
     constructor(options) {
-        //TODO: encryption for different types of content
         this.postKeys = (content) => __awaiter(this, void 0, void 0, function* () {
             var data = {
                 "resource_id": content.id,
@@ -23,8 +24,51 @@ class Zephyr {
             };
             const res = yield this.request(`${this.ZephyrUrl}/resource`, 'POST', { data });
         });
+        this.generateHTML = (content) => {
+            let output = `
+        <div class="zephyr-content" data-content-id="${content.id}">
+            <div class="zephyr-name">Name: ${content.name}</div>
+            <div class="zephyr-description">Description: ${content.description}</div>
+            <div class="zephyr-price">Price: ${content.price}</div>
+            <div class="zephyr-cipher" cipher-content="${content.content}"></div>
+            <img src="data:image/jpeg;base64,${content.content}" alt="" />
+        </div>`;
+            return output;
+        };
+        this.generateID = () => {
+            var id = rand_token_1.uid(16);
+            return id;
+        };
+        this.encryptText = (text, key) => {
+            var cipher = crypto_ts_1.AES.encrypt(text, key).toString();
+            return cipher;
+        };
+        this.encryptImage = (file, key) => {
+            var file_base64 = fs_1.readFileSync(file, 'base64');
+            var cipher = this.encryptText(file_base64, key);
+            return cipher;
+        };
+        this.encrypt = (content, key) => {
+            var cipher = this.encryptImage(content, key);
+            return cipher;
+        };
+        this.createContent = (options) => {
+            var content = {
+                id: this.generateID(),
+                name: options.name,
+                description: options.description,
+                price: options.price,
+                key: rand_token_1.uid(32),
+                content: options.content,
+                output: null
+            };
+            content.content = this.encrypt(content.content, content.key);
+            content.output = this.generateHTML(content);
+            return content;
+        };
         this.clientID = options.clientID;
         this.clientKey = options.clientKey;
+        this.ZephyrUrl = "http://54.244.63.140:8080";
         this.accessTokenPromise = null;
     }
     request(url, method, options) {
@@ -45,10 +89,6 @@ class Zephyr {
         //TODO: authorization method with Zephyr API
         return true; // placeholder
     }
-    encryptText(data) {
-        var cipher = crypto_ts_1.AES.encrypt(data.content, data.key);
-        return cipher;
-    }
 }
 exports.Zephyr = Zephyr;
-//# sourceMappingURL=Zephyr.js.map
+//# sourceMappingURL=zephyr.js.map

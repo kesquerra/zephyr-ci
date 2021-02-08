@@ -1,6 +1,6 @@
 {
   "name": "zephyr-ci",
-  "version": "1.0.12",
+  "version": "1.0.23",
   "description": "",
   "main": "./dist/index.js",
   "type": "commonjs",
@@ -26,6 +26,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "crypto-ts": "^1.0.2",
+    "fs": "0.0.1-security",
     "rand-token": "^1.0.1",
     "random-token": "0.0.8",
     "tsc": "^1.20150623.0",
