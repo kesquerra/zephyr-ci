@@ -2,7 +2,7 @@ import axios, {AxiosRequestConfig, Method} from 'axios';
 import {readFileSync} from 'fs';
 import {ClientData, AccessTokenData, Content, ContentOptions} from './DataTypes';
 import {uid} from 'rand-token';
-import {AES} from 'crypto-ts';
+var Crypto = require('crypto-ts')
 
 export class Zephyr {
     public clientID: string;
@@ -32,9 +32,9 @@ export class Zephyr {
         return value
     }
 
-    private getToken() {
-        //TODO: authorization method with Zephyr API
-        return true; // placeholder
+    private getToken = async(): Promise<void> => {
+        var hmac = Crypto.HmacSHA1(this.clientID, this.clientKey)
+        const res = await this.request(`${this.ZephyrUrl}/clientaccount`, 'POST', hmac)
     }
 
     private postKeys = async(content: Content): Promise<void> => {
@@ -44,6 +44,7 @@ export class Zephyr {
             "dkey": content.key
         }
         const res = await this.request(`${this.ZephyrUrl}/resource`, 'POST', {data})
+        console.log(res);
     }
 
     private generateHTML = (content: Content): string => {
@@ -64,7 +65,7 @@ export class Zephyr {
     }
 
     private encryptText = (text: string, key: string): string => {
-        var cipher = AES.encrypt(text, key).toString();
+        var cipher = Crypto.AES.encrypt(text, key).toString();
         return cipher;
     }
 
@@ -90,8 +91,9 @@ export class Zephyr {
             output: null
         }
 
-        content.content = this.encrypt(content.content, content.key)
-        content.output = this.generateHTML(content)
+        content.content = this.encrypt(content.content, content.key);
+        content.output = this.generateHTML(content);
+        this.postKeys(content);
         return content;
     }
 

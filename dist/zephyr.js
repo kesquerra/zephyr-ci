@@ -13,9 +13,13 @@ exports.Zephyr = void 0;
 const axios_1 = require("axios");
 const fs_1 = require("fs");
 const rand_token_1 = require("rand-token");
-const crypto_ts_1 = require("crypto-ts");
+var Crypto = require('crypto-ts');
 class Zephyr {
     constructor(options) {
+        this.getToken = () => __awaiter(this, void 0, void 0, function* () {
+            var hmac = Crypto.HmacSHA1(this.clientID, this.clientKey);
+            const res = yield this.request(`${this.ZephyrUrl}/clientaccount`, 'POST', hmac);
+        });
         this.postKeys = (content) => __awaiter(this, void 0, void 0, function* () {
             var data = {
                 "resource_id": content.id,
@@ -23,6 +27,7 @@ class Zephyr {
                 "dkey": content.key
             };
             const res = yield this.request(`${this.ZephyrUrl}/resource`, 'POST', { data });
+            console.log(res);
         });
         this.generateHTML = (content) => {
             let output = `
@@ -40,7 +45,7 @@ class Zephyr {
             return id;
         };
         this.encryptText = (text, key) => {
-            var cipher = crypto_ts_1.AES.encrypt(text, key).toString();
+            var cipher = Crypto.AES.encrypt(text, key).toString();
             return cipher;
         };
         this.encryptImage = (file, key) => {
@@ -64,6 +69,7 @@ class Zephyr {
             };
             content.content = this.encrypt(content.content, content.key);
             content.output = this.generateHTML(content);
+            this.postKeys(content);
             return content;
         };
         this.clientID = options.clientID;
@@ -84,10 +90,6 @@ class Zephyr {
             ));
             return value;
         });
-    }
-    getToken() {
-        //TODO: authorization method with Zephyr API
-        return true; // placeholder
     }
 }
 exports.Zephyr = Zephyr;
