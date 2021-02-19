@@ -33,8 +33,9 @@ export class Zephyr {
     }
 
     private getToken = async(): Promise<void> => {
-        var hmac = Crypto.HmacSHA1(this.clientID, this.clientKey)
-        const res = await this.request(`${this.ZephyrUrl}/clientaccount`, 'POST', hmac)
+        //var hmac = Crypto.HmacSHA1(this.clientID, this.clientKey)
+        //const res = await this.request(`${this.ZephyrUrl}/clientaccount`, 'POST', hmac)
+        return;
     }
 
     private postKeys = async(content: Content): Promise<void> => {
@@ -75,8 +76,14 @@ export class Zephyr {
         return cipher;
     }
 
+    private encryptLocalFile = (file: string, key: string): string => {
+        var file_utf = readFileSync(file, 'utf-8');
+        var cipher = this.encryptText(file_utf, key);
+        return cipher;
+    }
+
     private encrypt = (content: any, key: string): string => {
-        var cipher = this.encryptImage(content, key);
+        var cipher = this.encryptLocalFile(content, key);
         return cipher;
     }
 
@@ -93,7 +100,7 @@ export class Zephyr {
 
         content.content = this.encrypt(content.content, content.key);
         content.output = this.generateHTML(content);
-        this.postKeys(content);
+        //this.postKeys(content);
         return content;
     }
 

@@ -17,8 +17,9 @@ var Crypto = require('crypto-ts');
 class Zephyr {
     constructor(options) {
         this.getToken = () => __awaiter(this, void 0, void 0, function* () {
-            var hmac = Crypto.HmacSHA1(this.clientID, this.clientKey);
-            const res = yield this.request(`${this.ZephyrUrl}/clientaccount`, 'POST', hmac);
+            //var hmac = Crypto.HmacSHA1(this.clientID, this.clientKey)
+            //const res = await this.request(`${this.ZephyrUrl}/clientaccount`, 'POST', hmac)
+            return;
         });
         this.postKeys = (content) => __awaiter(this, void 0, void 0, function* () {
             var data = {
@@ -53,8 +54,13 @@ class Zephyr {
             var cipher = this.encryptText(file_base64, key);
             return cipher;
         };
+        this.encryptLocalFile = (file, key) => {
+            var file_utf = fs_1.readFileSync(file, 'utf-8');
+            var cipher = this.encryptText(file_utf, key);
+            return cipher;
+        };
         this.encrypt = (content, key) => {
-            var cipher = this.encryptImage(content, key);
+            var cipher = this.encryptLocalFile(content, key);
             return cipher;
         };
         this.createContent = (options) => {
@@ -69,7 +75,7 @@ class Zephyr {
             };
             content.content = this.encrypt(content.content, content.key);
             content.output = this.generateHTML(content);
-            this.postKeys(content);
+            //this.postKeys(content);
             return content;
         };
         this.clientID = options.clientID;

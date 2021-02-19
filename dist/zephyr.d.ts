@@ -13,6 +13,7 @@ export declare class Zephyr {
     private generateID;
     private encryptText;
     private encryptImage;
+    private encryptLocalFile;
     private encrypt;
     createContent: (options: ContentOptions) => Content;
 }
