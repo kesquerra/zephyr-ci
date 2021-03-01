@@ -2,7 +2,10 @@ import axios, {AxiosRequestConfig, Method} from 'axios';
 import {readFileSync} from 'fs';
 import {ClientData, AccessTokenData, Content, ContentOptions} from './DataTypes';
 import {uid} from 'rand-token';
-var Crypto = require('crypto-ts')
+import sha256 = require('crypto-js/sha256')
+import hmacSHA512 = require('crypto-js/hmac-sha512')
+import Base64 = require('crypto-js/enc-base64')
+import Crypto = require('crypto-js')
 
 export class Zephyr {
     public clientID: string;
@@ -33,9 +36,15 @@ export class Zephyr {
     }
 
     private getToken = async(): Promise<void> => {
-        //var hmac = Crypto.HmacSHA1(this.clientID, this.clientKey)
-        //const res = await this.request(`${this.ZephyrUrl}/clientaccount`, 'POST', hmac)
-        return;
+        const nonce = uid(16)
+        const hash = sha256(nonce + this.clientID);
+        const hmac = Base64.stringify(hmacSHA512(hash, this.clientKey))
+        var data = {
+            "client_id": this.clientID,
+            "nonce": nonce,
+            "hmac": hmac
+        }
+        //const res = await this.request(`${this.ZephyrUrl}/clientaccount`, 'POST', {data})
     }
 
     private postKeys = async(content: Content): Promise<void> => {
@@ -45,15 +54,15 @@ export class Zephyr {
             "dkey": content.key
         }
         const res = await this.request(`${this.ZephyrUrl}/resource`, 'POST', {data})
-        console.log(res);
     }
 
     private generateHTML = (content: Content): string => {
         let output: string = `
         <div class="zephyr-content" data-content-id="${content.id}">
-            <div class="zephyr-name">Name: ${content.name}</div>
-            <div class="zephyr-description">Description: ${content.description}</div>
-            <div class="zephyr-price">Price: ${content.price}</div>
+            <div class="zephyr-content-header">
+            <div class="zephyr-name">${content.name}</div>
+            <div class="zephyr-price">${content.price}</div>
+            <div class="zephyr-description">${content.description}</div>
             <div class="zephyr-cipher" cipher-content="${content.content}"></div>
             <img src="data:image/jpeg;base64,${content.content}" alt="" />
         </div>`
@@ -100,7 +109,7 @@ export class Zephyr {
 
         content.content = this.encrypt(content.content, content.key);
         content.output = this.generateHTML(content);
-        //this.postKeys(content);
+        this.postKeys(content);
         return content;
     }
 
