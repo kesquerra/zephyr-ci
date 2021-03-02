@@ -60,8 +60,9 @@ export class Zephyr {
         let output: string = `
         <div class="zephyr-content" data-content-id="${content.id}">
             <div class="zephyr-content-header">
-            <div class="zephyr-name">${content.name}</div>
-            <div class="zephyr-price">${content.price}</div>
+                <div class="zephyr-name">${content.name}</div>
+                <div class="zephyr-price">${content.price}</div>
+            </div>
             <div class="zephyr-description">${content.description}</div>
             <div class="zephyr-cipher" cipher-content="${content.content}"></div>
             <img src="data:image/jpeg;base64,${content.content}" alt="" />
