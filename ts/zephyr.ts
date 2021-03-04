@@ -6,19 +6,24 @@ import sha256 = require('crypto-js/sha256')
 import hmacSHA512 = require('crypto-js/hmac-sha512')
 import Base64 = require('crypto-js/enc-base64')
 import Crypto = require('crypto-js')
+import {JSDOM} from 'jsdom'
 
 export class Zephyr {
     public clientID: string;
     public clientKey: string;
     public ZephyrUrl: string;
     private accessToken?: AccessTokenData;
-    private accessTokenPromise: Promise<void>
+    private accessTokenPromise: Promise<void>;
+    public contents: Content[];
+    public contentPromise: Promise<void>;
+
 
     constructor (options: ClientData) {
         this.clientID = options.clientID;
         this.clientKey = options.clientKey
         this.ZephyrUrl = "http://54.244.63.140:8080"
         this.accessTokenPromise = null;
+        this.contents = [];
     }
 
     private async request (url: string, method: Method, options?: AxiosRequestConfig) {
@@ -93,28 +98,57 @@ export class Zephyr {
     }
 
     private encrypt = (content: any, key: string): string => {
-        var cipher = this.encryptLocalFile(content, key);
+        var cipher = this.encryptText(content, key);
         return cipher;
     }
 
-    public createContent = (options: ContentOptions): Content => {
-        var content: Content = {
-            id: this.generateID(),
-            name: options.name,
-            description: options.description,
-            price: options.price,
-            key: uid(32),
-            content: options.content,
-            output: null
-        }
-
-        content.content = this.encrypt(content.content, content.key);
-        content.output = this.generateHTML(content);
-        this.postKeys(content);
-        return content;
+    private convertContent = (input: ContentOptions): Promise<string> => {
+        return new Promise(function(resolve, reject) {
+            if (input.type == "fromURL") {
+                axios.get(`${input.content}`).then(res => {
+                    const dom = new JSDOM(res.data)
+                    var node = dom.window.document.querySelector('article')
+                    resolve(node.outerHTML);
+                })
+            } else if (input.type == "file") {
+                resolve(readFileSync(input.content, 'utf-8'))
+            }
+        })
     }
 
+    public createContent = async(input: ContentOptions): Promise<Content> => {
+        var self = this
+        return new Promise(function(resolve, reject) {
+            self.convertContent(input).then(text => {
+                var content: Content = {
+                    id: self.generateID(),
+                    name: input.name,
+                    description: input.description,
+                    price: input.price,
+                    key: uid(16),
+                    content: text,
+                    output: null
+                }
+                content.content = self.encrypt(content.content, content.key);
+                content.output = self.generateHTML(content);
+                self.postKeys(content);
+                self.contents.push(content)
+                resolve(content)
+            })
+        });
+    };
+
+    public getOutputs = (options: Array<ContentOptions>) => {
+        var self = this
+        return new Promise(function(resolve) {
+            const result = options.map(async(content) => {
+                return await self.createContent(content)
+            })
+            Promise.all(result).then(res => {
+                resolve(res)
+            })
+        })
+    }
 }
 
-
-
+console.log('test')

@@ -12,6 +12,7 @@ export interface ContentOptions {
     description: string;
     price: number;
     content: any;
+    type: any;
 }
 export interface ContentAPI {
     id: string;

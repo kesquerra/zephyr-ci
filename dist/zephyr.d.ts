@@ -5,6 +5,8 @@ export declare class Zephyr {
     ZephyrUrl: string;
     private accessToken?;
     private accessTokenPromise;
+    contents: Content[];
+    contentPromise: Promise<void>;
     constructor(options: ClientData);
     private request;
     private getToken;
@@ -15,5 +17,7 @@ export declare class Zephyr {
     private encryptImage;
     private encryptLocalFile;
     private encrypt;
-    createContent: (options: ContentOptions) => Content;
+    private convertContent;
+    createContent: (input: ContentOptions) => Promise<Content>;
+    getOutputs: (options: Array<ContentOptions>) => Promise<unknown>;
 }
