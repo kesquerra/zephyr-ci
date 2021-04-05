@@ -22,6 +22,13 @@ export interface ContentAPI {
     key: string
 }
 
+export interface HMAC {
+    id: string,
+    nonce: string,
+    time: number,
+    signature: string
+}
+
 export interface ClientData {
         clientID: string;
         clientKey: string;

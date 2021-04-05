@@ -13,31 +13,41 @@ exports.Zephyr = void 0;
 const axios_1 = require("axios");
 const fs_1 = require("fs");
 const rand_token_1 = require("rand-token");
-const sha256 = require("crypto-js/sha256");
+const sha512 = require("crypto-js/sha512");
 const hmacSHA512 = require("crypto-js/hmac-sha512");
 const Base64 = require("crypto-js/enc-base64");
 const Crypto = require("crypto-js");
 const jsdom_1 = require("jsdom");
 class Zephyr {
     constructor(options) {
-        this.getToken = () => __awaiter(this, void 0, void 0, function* () {
-            const nonce = rand_token_1.uid(16);
-            const hash = sha256(nonce + this.clientID);
+        this.buildHmac = () => {
+            const non = rand_token_1.uid(16);
+            const hash = sha512(non + this.clientID);
             const hmac = Base64.stringify(hmacSHA512(hash, this.clientKey));
-            var data = {
-                "client_id": this.clientID,
-                "nonce": nonce,
-                "hmac": hmac
+            let data = {
+                id: this.clientID,
+                nonce: non,
+                time: Date.now(),
+                signature: hmac,
             };
-            //const res = await this.request(`${this.ZephyrUrl}/clientaccount`, 'POST', {data})
-        });
+            return data;
+        };
         this.postKeys = (content) => __awaiter(this, void 0, void 0, function* () {
-            var data = {
-                "resource_id": content.id,
-                "cost": content.price,
-                "dkey": content.key
+            let hmac = this.buildHmac();
+            let config = {
+                headers: {
+                    "APP_ID": hmac.id,
+                    "Nonce": hmac.nonce,
+                    "Timestamp": hmac.time,
+                    "Signature": hmac.signature
+                },
+                data: {
+                    "resource_id": content.id,
+                    "cost": content.price,
+                    "dkey": content.key
+                }
             };
-            const res = yield this.request(`${this.ZephyrUrl}/resource`, 'POST', { data });
+            const res = yield this.request(`${this.ZephyrUrl}/resource`, 'POST', config);
         });
         this.generateHTML = (content) => {
             let output = `
@@ -123,17 +133,10 @@ class Zephyr {
         this.clientID = options.clientID;
         this.clientKey = options.clientKey;
         this.ZephyrUrl = "http://54.244.63.140:8080";
-        this.accessTokenPromise = null;
         this.contents = [];
     }
     request(url, method, options) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.accessTokenPromise)
-                yield this.accessTokenPromise;
-            if (!this.accessToken || ((_a = this.accessToken) === null || _a === void 0 ? void 0 : _a.expiration) <= Date.now())
-                yield this.getToken();
-            //TODO: add token value
             const value = yield axios_1.default(url, Object.assign({ method }, options
             //add token
             ));
@@ -142,5 +145,4 @@ class Zephyr {
     }
 }
 exports.Zephyr = Zephyr;
-console.log('test');
 //# sourceMappingURL=zephyr.js.map

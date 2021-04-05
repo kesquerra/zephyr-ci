@@ -1,19 +1,17 @@
 import axios, {AxiosRequestConfig, Method} from 'axios';
 import {readFileSync} from 'fs';
-import {ClientData, AccessTokenData, Content, ContentOptions} from './DataTypes';
+import {ClientData, AccessTokenData, Content, ContentOptions, HMAC} from './DataTypes';
 import {uid} from 'rand-token';
-import sha256 = require('crypto-js/sha256')
+import sha512 = require('crypto-js/sha512')
 import hmacSHA512 = require('crypto-js/hmac-sha512')
 import Base64 = require('crypto-js/enc-base64')
 import Crypto = require('crypto-js')
-import {JSDOM} from 'jsdom'
+import {JSDOM} from 'jsdom';
 
 export class Zephyr {
     public clientID: string;
     public clientKey: string;
     public ZephyrUrl: string;
-    private accessToken?: AccessTokenData;
-    private accessTokenPromise: Promise<void>;
     public contents: Content[];
     public contentPromise: Promise<void>;
 
@@ -22,15 +20,10 @@ export class Zephyr {
         this.clientID = options.clientID;
         this.clientKey = options.clientKey
         this.ZephyrUrl = "http://54.244.63.140:8080"
-        this.accessTokenPromise = null;
         this.contents = [];
     }
 
     private async request (url: string, method: Method, options?: AxiosRequestConfig) {
-        if (this.accessTokenPromise) await this.accessTokenPromise
-        if (!this.accessToken || this.accessToken?.expiration <= Date.now()) await this.getToken()
-        
-        //TODO: add token value
 
         const value = await axios(url, {
             ...{method},
@@ -40,25 +33,36 @@ export class Zephyr {
         return value
     }
 
-    private getToken = async(): Promise<void> => {
-        const nonce = uid(16)
-        const hash = sha256(nonce + this.clientID);
+    private buildHmac = ():HMAC => {
+        
+        const non = uid(16);
+        const hash = sha512(non + this.clientID);
         const hmac = Base64.stringify(hmacSHA512(hash, this.clientKey))
-        var data = {
-            "client_id": this.clientID,
-            "nonce": nonce,
-            "hmac": hmac
+        let data: HMAC = {
+            id: this.clientID,
+            nonce: non,
+            time: Date.now(),
+            signature: hmac,
         }
-        //const res = await this.request(`${this.ZephyrUrl}/clientaccount`, 'POST', {data})
+        return data;
     }
 
     private postKeys = async(content: Content): Promise<void> => {
-        var data = {
-            "resource_id": content.id,
-            "cost": content.price,
-            "dkey": content.key
+        let hmac = this.buildHmac();
+        let config: AxiosRequestConfig = {
+            headers: {
+                "APP_ID": hmac.id,
+                "Nonce": hmac.nonce,
+                "Timestamp": hmac.time,
+                "Signature": hmac.signature
+            },
+            data: {
+                "resource_id": content.id,
+                "cost": content.price,
+                "dkey": content.key
+            }
         }
-        const res = await this.request(`${this.ZephyrUrl}/resource`, 'POST', {data})
+        const res = await this.request(`${this.ZephyrUrl}/resource`, 'POST', config);
     }
 
     private generateHTML = (content: Content): string => {
@@ -150,5 +154,3 @@ export class Zephyr {
         })
     }
 }
-
-console.log('test')

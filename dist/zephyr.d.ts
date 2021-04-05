@@ -3,13 +3,11 @@ export declare class Zephyr {
     clientID: string;
     clientKey: string;
     ZephyrUrl: string;
-    private accessToken?;
-    private accessTokenPromise;
     contents: Content[];
     contentPromise: Promise<void>;
     constructor(options: ClientData);
     private request;
-    private getToken;
+    private buildHmac;
     private postKeys;
     private generateHTML;
     private generateID;
