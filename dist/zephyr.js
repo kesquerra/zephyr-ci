@@ -17,7 +17,9 @@ const hmacSHA512 = require("crypto-js/hmac-sha512");
 const Crypto = require("crypto-js");
 const jsdom_1 = require("jsdom");
 class Zephyr {
+    //client construction
     constructor(options) {
+        // create hmac signature
         this.buildHmac = () => {
             const non = rand_token_1.uid(16);
             const hmac = hmacSHA512(non, this.clientKey);
@@ -29,6 +31,7 @@ class Zephyr {
             };
             return data;
         };
+        // construct appropriate hmac and send encryption keys to API
         this.postKeys = (content) => __awaiter(this, void 0, void 0, function* () {
             let hmac = this.buildHmac();
             let config = {
@@ -46,6 +49,7 @@ class Zephyr {
             };
             const res = yield this.request(`${this.ZephyrUrl}/resource`, 'POST', config);
         });
+        // create HTML string for insertion of content in page
         this.generateHTML = (content) => {
             let output = `
         <div class="zephyr-content" data-content-id="${content.id}">
@@ -59,37 +63,45 @@ class Zephyr {
         </div>`;
             return output;
         };
+        // unique id for API
         this.generateID = () => {
             var id = rand_token_1.uid(16);
             return id;
         };
+        // encrypt text inputs
         this.encryptText = (text, key) => {
             var cipher = Crypto.AES.encrypt(text, key).toString();
             return cipher;
         };
+        // encrypt images by converting to base 64 and encrypting
         this.encryptImage = (file, key) => {
             var file_base64 = fs_1.readFileSync(file, 'base64');
             var cipher = this.encryptText(file_base64, key);
             return cipher;
         };
+        //encrypt local file by parsing to utf-8
         this.encryptLocalFile = (file, key) => {
             var file_utf = fs_1.readFileSync(file, 'utf-8');
             var cipher = this.encryptText(file_utf, key);
             return cipher;
         };
+        // cumulative encryption function for file type
         this.encrypt = (content, key) => {
             var cipher = this.encryptText(content, key);
             return cipher;
         };
+        //convert input content to appropriate text
         this.convertContent = (input) => {
             var self = this;
             return new Promise(function (resolve, reject) {
+                // parse articles from external url
                 if (input.type == "fromURL") {
                     axios_1.default.get(`${input.content}`).then(res => {
                         const dom = new jsdom_1.JSDOM(res.data);
                         var node = dom.window.document.querySelector('article');
                         resolve(node.outerHTML);
                     });
+                    // demo specific functionality
                 }
                 else if (input.type == "fullPage") {
                     axios_1.default.get(`${input.content}`).then(res => {
@@ -141,15 +153,18 @@ class Zephyr {
                         var body = dom.window.document.querySelector('body');
                         resolve(node.innerHTML + "</head>" + body.outerHTML);
                     });
+                    // parse local file
                 }
                 else if (input.type == "file") {
                     resolve(fs_1.readFileSync(input.content, 'utf-8'));
+                    // parse text content
                 }
                 else {
                     resolve(input.content);
                 }
             });
         };
+        //create content type, encrypt content, post keys to API and return content type with encryption
         this.createContent = (input) => __awaiter(this, void 0, void 0, function* () {
             var self = this;
             return new Promise(function (resolve, reject) {
@@ -166,16 +181,21 @@ class Zephyr {
                     if (input.type != "fullPage") {
                         content.content = self.encrypt(content.content, content.key);
                         content.output = self.generateHTML(content);
+                        // demo specific content    
                     }
                     else {
                         content.output = content.content;
                     }
+                    //post keys to API
                     self.postKeys(content);
+                    //add content to array
                     self.contents.push(content);
+                    //return content
                     resolve(content);
                 });
             });
         });
+        // create multiple content types
         this.getOutputs = (options) => {
             var self = this;
             return new Promise(function (resolve) {
@@ -192,6 +212,7 @@ class Zephyr {
         this.ZephyrUrl = "http://54.244.63.140:8080";
         this.contents = [];
     }
+    // make requests (GET, POST, etc)
     request(url, method, options) {
         return __awaiter(this, void 0, void 0, function* () {
             const value = yield axios_1.default(url, Object.assign({ method }, options

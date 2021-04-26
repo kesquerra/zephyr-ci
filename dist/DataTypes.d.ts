@@ -29,7 +29,3 @@ export interface ClientData {
     clientID: string;
     clientKey: string;
 }
-export interface AccessTokenData {
-    value: string;
-    expiration: number;
-}
