@@ -36,13 +36,12 @@ export class Zephyr {
     private buildHmac = ():HMAC => {
         
         const non = uid(16);
-        const hash = sha512(non + this.clientID);
-        const hmac = Base64.stringify(hmacSHA512(hash, this.clientKey))
+        const hmac = hmacSHA512(non, this.clientKey)
         let data: HMAC = {
             id: this.clientID,
             nonce: non,
             time: Date.now(),
-            signature: hmac,
+            signature: hmac.toString(Crypto.enc.Hex)
         }
         return data;
     }
@@ -107,6 +106,7 @@ export class Zephyr {
     }
 
     private convertContent = (input: ContentOptions): Promise<string> => {
+        var self = this
         return new Promise(function(resolve, reject) {
             if (input.type == "fromURL") {
                 axios.get(`${input.content}`).then(res => {
@@ -114,8 +114,59 @@ export class Zephyr {
                     var node = dom.window.document.querySelector('article')
                     resolve(node.outerHTML);
                 })
+            } else if (input.type == "fullPage") {
+                axios.get(`${input.content}`).then(res => {
+                    const dom = new JSDOM(res.data);
+                    var scripts;
+                    var count = 0;
+                    dom.window.document.querySelectorAll('script').forEach(el => {
+                        if (el.getAttribute('type') == 'text/javascript') {
+                            if (count == 6) {
+                                scripts += el.outerHTML;
+                                var content: Content = {
+                                    id: self.generateID(),
+                                    name: input.name,
+                                    description: input.description,
+                                    price: input.price,
+                                    key: uid(16),
+                                    content: scripts,
+                                    output: null
+                                }
+                                self.postKeys(content);
+                                content.content = self.encrypt(content.content, content.key);
+                                content.output = self.generateHTML(content);
+                                el.outerHTML = content.output;
+                            } else {
+                                scripts += el.outerHTML;
+                                el.parentElement.removeChild(el);
+                            }
+                        }
+                    })
+                    dom.window.document.querySelectorAll('div').forEach(el => {
+                        if (el.getAttribute('class') == 'article__chunks') {
+                            var content: Content = {
+                                id: self.generateID(),
+                                name: input.name,
+                                description: input.description,
+                                price: input.price,
+                                key: uid(16),
+                                content: el.outerHTML,
+                                output: null
+                            }
+                            self.postKeys(content);
+                            content.content = self.encrypt(content.content, content.key);
+                            content.output = self.generateHTML(content);
+                            el.outerHTML = content.output;
+                        }
+                    })
+                    var node = dom.window.document.querySelector('head')
+                    var body = dom.window.document.querySelector('body')
+                    resolve(node.innerHTML + "</head>" + body.outerHTML);
+                })
             } else if (input.type == "file") {
                 resolve(readFileSync(input.content, 'utf-8'))
+            } else {
+                resolve(input.content);
             }
         })
     }
@@ -133,8 +184,13 @@ export class Zephyr {
                     content: text,
                     output: null
                 }
-                content.content = self.encrypt(content.content, content.key);
-                content.output = self.generateHTML(content);
+                if (input.type != "fullPage") {
+                    content.content = self.encrypt(content.content, content.key);
+                    content.output = self.generateHTML(content);
+                } else {
+                    content.output = content.content;
+                }
+                
                 self.postKeys(content);
                 self.contents.push(content)
                 resolve(content)

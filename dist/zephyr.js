@@ -13,22 +13,19 @@ exports.Zephyr = void 0;
 const axios_1 = require("axios");
 const fs_1 = require("fs");
 const rand_token_1 = require("rand-token");
-const sha512 = require("crypto-js/sha512");
 const hmacSHA512 = require("crypto-js/hmac-sha512");
-const Base64 = require("crypto-js/enc-base64");
 const Crypto = require("crypto-js");
 const jsdom_1 = require("jsdom");
 class Zephyr {
     constructor(options) {
         this.buildHmac = () => {
             const non = rand_token_1.uid(16);
-            const hash = sha512(non + this.clientID);
-            const hmac = Base64.stringify(hmacSHA512(hash, this.clientKey));
+            const hmac = hmacSHA512(non, this.clientKey);
             let data = {
                 id: this.clientID,
                 nonce: non,
                 time: Date.now(),
-                signature: hmac,
+                signature: hmac.toString(Crypto.enc.Hex)
             };
             return data;
         };
@@ -85,6 +82,7 @@ class Zephyr {
             return cipher;
         };
         this.convertContent = (input) => {
+            var self = this;
             return new Promise(function (resolve, reject) {
                 if (input.type == "fromURL") {
                     axios_1.default.get(`${input.content}`).then(res => {
@@ -93,8 +91,62 @@ class Zephyr {
                         resolve(node.outerHTML);
                     });
                 }
+                else if (input.type == "fullPage") {
+                    axios_1.default.get(`${input.content}`).then(res => {
+                        const dom = new jsdom_1.JSDOM(res.data);
+                        var scripts;
+                        var count = 0;
+                        dom.window.document.querySelectorAll('script').forEach(el => {
+                            if (el.getAttribute('type') == 'text/javascript') {
+                                if (count == 6) {
+                                    scripts += el.outerHTML;
+                                    var content = {
+                                        id: self.generateID(),
+                                        name: input.name,
+                                        description: input.description,
+                                        price: input.price,
+                                        key: rand_token_1.uid(16),
+                                        content: scripts,
+                                        output: null
+                                    };
+                                    self.postKeys(content);
+                                    content.content = self.encrypt(content.content, content.key);
+                                    content.output = self.generateHTML(content);
+                                    el.outerHTML = content.output;
+                                }
+                                else {
+                                    scripts += el.outerHTML;
+                                    el.parentElement.removeChild(el);
+                                }
+                            }
+                        });
+                        dom.window.document.querySelectorAll('div').forEach(el => {
+                            if (el.getAttribute('class') == 'article__chunks') {
+                                var content = {
+                                    id: self.generateID(),
+                                    name: input.name,
+                                    description: input.description,
+                                    price: input.price,
+                                    key: rand_token_1.uid(16),
+                                    content: el.outerHTML,
+                                    output: null
+                                };
+                                self.postKeys(content);
+                                content.content = self.encrypt(content.content, content.key);
+                                content.output = self.generateHTML(content);
+                                el.outerHTML = content.output;
+                            }
+                        });
+                        var node = dom.window.document.querySelector('head');
+                        var body = dom.window.document.querySelector('body');
+                        resolve(node.innerHTML + "</head>" + body.outerHTML);
+                    });
+                }
                 else if (input.type == "file") {
                     resolve(fs_1.readFileSync(input.content, 'utf-8'));
+                }
+                else {
+                    resolve(input.content);
                 }
             });
         };
@@ -111,8 +163,13 @@ class Zephyr {
                         content: text,
                         output: null
                     };
-                    content.content = self.encrypt(content.content, content.key);
-                    content.output = self.generateHTML(content);
+                    if (input.type != "fullPage") {
+                        content.content = self.encrypt(content.content, content.key);
+                        content.output = self.generateHTML(content);
+                    }
+                    else {
+                        content.output = content.content;
+                    }
                     self.postKeys(content);
                     self.contents.push(content);
                     resolve(content);
