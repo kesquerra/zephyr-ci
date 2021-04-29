@@ -8,7 +8,7 @@
 # Implementation Server-Side
 Client Configuration
 ```javascript
-const zephyr = require('zephyr-ci)
+const zephyr = require('zephyr-ci')
 
 const config {
     clientID: [client email],
@@ -54,4 +54,5 @@ const content_complete = connection.getOutputs(content_list);
 
 Input Content on Webpage
 `content_complete` contains the HTML for each piece of content to display on website.
+
 This can be utilized to place content on website however developer deems appropriate.
