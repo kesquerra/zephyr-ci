@@ -8,7 +8,7 @@
 # Implementation Server-Side
 Client Configuration
 ```javascript
-const zephyr = require('zephyr-ci')
+const zephyr = require('zephyr-ci');
 
 const config {
     clientID: [client email],
@@ -18,12 +18,13 @@ const config {
 const connection = new zephyr.Zephyr(config);
 ```
 
+<b>Examples</b>
 Local File Example
 ```javascript
 const file = {
     name: "[Article Name]",
     description: "[Description of Article]",
-    price: [price of content],
+    price: [price_of_content],
     content: "[file location]", type: "file"};
 ```
 
@@ -32,7 +33,7 @@ Text Example
 const text = {
     name: "[Article Name]",
     description: "[Description of Article]",
-    price: [price of content],
+    price: [price_of_content],
     content: "[text]", type: "text"};
 ```
 
@@ -41,7 +42,7 @@ URL Example
 const article = {
     name: "[Article Name]",
     description: "[Description of Article]",
-    price: [price of content],
+    price: [price_of_content],
     content: "[url link]", type: "fromURL"};
 ```
 
