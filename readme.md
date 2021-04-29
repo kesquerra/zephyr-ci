@@ -1,11 +1,11 @@
-### Zephyr Content Integration
+# Zephyr Content Integration
 ***
 ## [NPM Package](https://www.npmjs.com/package/zephyr-ci)
 
-# Installation
+### Installation
 `npm install zephyr-ci`
 
-# Implementation Server-Side
+### Implementation Server-Side
 Client Configuration
 ```javascript
 const zephyr = require('zephyr-ci');
