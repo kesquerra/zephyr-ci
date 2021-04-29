@@ -118,7 +118,7 @@ export class Zephyr {
         var self = this
         return new Promise(function(resolve, reject) {
             // parse articles from external url
-            if (input.type == "fromURL") {
+            if (input.type == "url") {
                 axios.get(`${input.content}`).then(res => {
                     const dom = new JSDOM(res.data)
                     var node = dom.window.document.querySelector('article')

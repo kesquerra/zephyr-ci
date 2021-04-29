@@ -42,7 +42,7 @@ const article = {
     name: "[Article Name]",
     description: "[Description of Article]",
     price: [price_of_content],
-    content: "[url link]", type: "fromURL"};
+    content: "[url link]", type: "url"};
 ```
 
 Asynchronous Content Fetching
