@@ -15,7 +15,8 @@ const config {
     clientKey: [client key]
 };
 
-const connection = new zephyr.Zephyr(config);```
+const connection = new zephyr.Zephyr(config);
+```
 
 Local File Example
 ```javascript
@@ -23,7 +24,8 @@ const file = {
     name: "[Article Name]",
     description: "[Description of Article]",
     price: [price of content],
-    content: "[file location]", type: "file"};```
+    content: "[file location]", type: "file"};
+```
 
 Text Example
 ```javascript
@@ -31,7 +33,8 @@ const text = {
     name: "[Article Name]",
     description: "[Description of Article]",
     price: [price of content],
-    content: "[text]", type: "text"};```
+    content: "[text]", type: "text"};
+```
 
 URL Example
 ```javascript
@@ -39,13 +42,15 @@ const article = {
     name: "[Article Name]",
     description: "[Description of Article]",
     price: [price of content],
-    content: "[url link]", type: "fromURL"};```
+    content: "[url link]", type: "fromURL"};
+```
 
 Asynchronous Content Fetching
 ```javascript
 const content_list = [file, text, article];
 
-const content_complete = connection.getOutputs(content_list);```
+const content_complete = connection.getOutputs(content_list);
+```
 
 Input Content on Webpage
 `content_complete` contains the HTML for each piece of content to display on website.
