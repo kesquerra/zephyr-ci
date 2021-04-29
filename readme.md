@@ -7,7 +7,8 @@
 
 # Implementation Server-Side
 Client Configuration
-```const zephyr = require('zephyr-ci)
+```javascript
+const zephyr = require('zephyr-ci)
 
 const config {
     clientID: [client email],
@@ -17,28 +18,32 @@ const config {
 const connection = new zephyr.Zephyr(config);```
 
 Local File Example
-```const file = {
+```javascript
+const file = {
     name: "[Article Name]",
     description: "[Description of Article]",
     price: [price of content],
     content: "[file location]", type: "file"};```
 
 Text Example
-```const text = {
+```javascript
+const text = {
     name: "[Article Name]",
     description: "[Description of Article]",
     price: [price of content],
     content: "[text]", type: "text"};```
 
 URL Example
-```const article = {
+```javascript
+const article = {
     name: "[Article Name]",
     description: "[Description of Article]",
     price: [price of content],
     content: "[url link]", type: "fromURL"};```
 
 Asynchronous Content Fetching
-```const content_list = [file, text, article];
+```javascript
+const content_list = [file, text, article];
 
 const content_complete = connection.getOutputs(content_list);```
 
