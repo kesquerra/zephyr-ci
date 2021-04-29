@@ -10,7 +10,7 @@ Client Configuration
 ```javascript
 const zephyr = require('zephyr-ci');
 
-const config {
+const config = {
     clientID: [client email],
     clientKey: [client key]
 };
@@ -18,7 +18,6 @@ const config {
 const connection = new zephyr.Zephyr(config);
 ```
 
-<b>Examples</b>
 Local File Example
 ```javascript
 const file = {
