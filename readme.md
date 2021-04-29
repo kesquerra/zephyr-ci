@@ -24,7 +24,8 @@ const file = {
     name: "[Article Name]",
     description: "[Description of Article]",
     price: [price_of_content],
-    content: "[file location]", type: "file"};
+    content: "[file location]",
+    type: "file"};
 ```
 
 Text Example
@@ -33,7 +34,8 @@ const text = {
     name: "[Article Name]",
     description: "[Description of Article]",
     price: [price_of_content],
-    content: "[text]", type: "text"};
+    content: "[text]",
+    type: "text"};
 ```
 
 URL Example
@@ -42,7 +44,8 @@ const article = {
     name: "[Article Name]",
     description: "[Description of Article]",
     price: [price_of_content],
-    content: "[url link]", type: "url"};
+    content: "[url link]",
+    type: "url"};
 ```
 
 Asynchronous Content Fetching
