@@ -3,6 +3,8 @@
 ## [NPM Package](https://www.npmjs.com/package/zephyr-ci)
 Forked from [Zephyr Content Integration](https://gitlab.com/zephyr-payments/content-integration)
 
+Solo development of component, reflects state as of date I left the project
+
 ### Installation
 `npm install zephyr-ci`
 
