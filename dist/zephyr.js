@@ -52,7 +52,7 @@ class Zephyr {
         // create HTML string for insertion of content in page
         this.generateHTML = (content) => {
             let output = `
-        <div class="zephyr-content" data-content-id="${content.id}">
+        <div class="zephyr-content" style="position:relative; left:50%; transform: translate(-50%, 0); z-index:50;" data-content-id="${content.id}">
             <div class="zephyr-content-header">
                 <div class="zephyr-name">${content.name}</div>
                 <div class="zephyr-price">${content.price}</div>
