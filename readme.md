@@ -2,7 +2,7 @@
 ***
 This repository reflects the state of the platform component as of the time I left the project. All code in this repository was created and updated by myself individually.
 
-This component is part of the [Zephyr Payment Platform](https://gitlab.com/zephyr-payments)
+This component is part of the [Zephyr Payment Platform](https://gitlab.com/zephyr-payments).
 
 The Zephyr Payment Platform aims to replace the current subscription based content model with a pay-per-view model.
 
