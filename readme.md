@@ -1,6 +1,6 @@
 # Zephyr Content Integration
 ***
-This repository reflects the state of the platform component as of the time I left the project.
+This repository reflects the state of the platform component as of the time I left the project. All code in this repository was created and updated by myself individually.
 
 This component is part of the [Zephyr Payment Platform](https://gitlab.com/zephyr-payments)
 
